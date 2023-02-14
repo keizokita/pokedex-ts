@@ -1,0 +1,144 @@
+.pokemon-card {
+    font-family: "Signika", arial, sans-serif;
+    margin: 0 5px 50px;
+    width: 215px;
+    display: flex;
+    flex-direction: column;
+    background: #333333;
+    border-radius: 5px;
+
+    &__image {
+        background: #F2F2F2;
+        border-radius: 5px;
+    }
+
+    &__number {
+        padding: 0 10px;
+        color: #919191;
+        font-size: 80%;
+        padding-top: 2px;
+    }
+
+    &__name {
+        padding: 0 10px;
+        color: #313131;
+        font-size: 154%;
+        margin: 0.5em 0 5px;
+        color: #FFFF;
+
+    }
+
+    &__types {
+        display: flex;
+        margin: 6px;
+    }
+
+    &__type {
+        margin: 0 10px;
+        padding: 5px;
+        border-radius: 3px;
+        line-height: 18px;
+        max-width: 110px;
+        width: 38.4375%;
+        float: left;
+        text-transform: none;
+        font-size: 11px;
+        text-align: center;
+
+        &--bug {
+            background-color: #729f3f;
+            color: #fff;
+        }
+
+        &--dark {
+            background-color: #707070;
+            color: #fff;
+        }
+
+        &--dragon {
+            background-color: #53a4cf;
+            color: #fff;
+        }
+
+        &--electric {
+            background-color: #eed535;
+            color: #212121;
+        }
+
+        &--fairy {
+            background-color: #fdb9e9;
+            color: #212121;
+        }
+
+        &--fighting {
+            background-color: #d56723;
+            color: #fff;
+        }
+
+        &--fire {
+            background-color: #fd7d24;
+            color: #fff;
+        }
+
+        &--flying {
+            background-color: #3dc7ef;
+            color: #212121;
+        }
+
+        &--ghost {
+            background-color: #7b62a3;
+            color: #fff;
+        }
+
+        &--grass {
+            background-color: #9bcc50;
+            color: #212121;
+        }
+
+        &--ground {
+            background-color: #f7de3f;
+            color: #212121;
+        }
+
+        &--ice {
+            background-color: #51c4e7;
+            color: #212121;
+        }
+
+        &--normal {
+            background-color: #a4acaf;
+            color: #212121;
+        }
+
+        &--poison {
+            background-color: #b97fc9;
+            color: #fff;
+        }
+
+        &--psychic {
+            background-color: #f366b9;
+            color: #fff;
+        }
+
+        &--rock {
+            background-color: #a38c21;
+            color: #fff;
+        }
+
+        &--steel {
+            background-color: #9eb7b8;
+            color: #212121;
+        }
+
+        &--water {
+            background-color: #4592c4;
+            color: #fff;
+        }
+    }
+}
+
+.poke-ajusts{
+    display: flex;
+    justify-content: center;
+    text-transform: capitalize;
+}

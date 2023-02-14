@@ -1,0 +1,20 @@
+<h5 class="tittle text-center">Pokedex</h5>
+
+<div class="input-group rounded">
+    <form [formGroup]="formSearch" class="d-flex col-md-12">
+        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+        aria-describedby="search-addon" [formControl]="nameSearch"/>
+        <button class="input-group-text border-0" id="search-addon" (click)="onSearch()">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </form>
+</div>
+
+
+<app-pokemon-card *ngFor="let pokemon of pokemonService.pokemons | paginate: { itemsPerPage: 12, currentPage: page, totalItems: totalPokemons }" [pokemon]="pokemon" class="col-md-3">
+</app-pokemon-card>
+
+<br />
+<br />
+
+<pagination-controls (pageChange)="page = $event; pokemons = []"></pagination-controls>
