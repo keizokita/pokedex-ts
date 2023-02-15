@@ -1,20 +1,28 @@
-:host {
-    display: flex;
-    flex-wrap: wrap;
-    place-content: space-evenly;
-    background: #33095d;
-    flex-direction: row;
+* {
+    margin: 0;
+}
+
+.container {
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    max-height: 80%;
+    padding-bottom: 0;
 }
 
 .input-group {
-    margin: 4%;
+    // margin: 4%;
+    padding: 4%;
 }
 
 h5 {
     color: #FFFF;
-    margin-top: 2%;
+    padding-top: 2%;
+    cursor: pointer;
 }
 
-.pagination-controls {
-    text-align: center;
+.pagination {
+    display: flex;
+    justify-content: center;
+    color: #FFFF;
 }

@@ -1,11 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-} from '@angular/forms';
-import { PokemonService } from 'src/pokemon.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { from, map, mergeMap } from 'rxjs';
 
 @Component({
   selector: 'app-pokemon-list',
@@ -13,30 +9,97 @@ import { PokemonService } from 'src/pokemon.service';
   styleUrls: ['./pokemon-list.component.scss'],
 })
 export class PokemonListComponent implements OnInit {
-  pokemons: any[] = [];
+  public pokemons: Pokemon[] = [];
   page = 1;
   itemsPerPage!: number;
   totalPokemons!: number;
   formSearch!: FormGroup;
-  nameSearch = new FormControl();
   readonly SEARCH_URL = 'https://pokeapi.co/api/v2/pokemon/';
+  pokemon: any = [];
 
-  constructor(
-    public pokemonService: PokemonService,
-    private http: HttpClient,
-    private fb: FormBuilder
-  ) {}
-  ngOnInit() {
+  constructor(private http: HttpClient, private fb: FormBuilder) {}
+  ngOnInit(): void {
+    this.getPokemonList();
+
     this.formSearch = this.fb.group({
       nameSearch: [null],
     });
   }
 
+  Home() {
+    this.pokemons = [];
+    this.getPokemonList();
+  }
+
+  getPokemonList() {
+    const URL = 'https://pokeapi.co/api/v2/pokemon/';
+    console.log(this.totalPokemons);
+
+    return this.http
+      .get<any>(URL)
+      .pipe(
+        map((value) => value.results),
+        map((value: any) => {
+          return from(value).pipe(mergeMap((v: any) => this.http.get(v.url)));
+        }),
+        mergeMap((value) => value)
+      )
+      .subscribe((results: any) => {
+        this.totalPokemons = results.count;
+        const pokemon: Pokemon = {
+          image: results.sprites.front_default,
+          number: results.id,
+          name: results.name,
+          types: results.types.map((t: { type: { name: any } }) => t.type.name),
+        };
+        this.pokemons.push(pokemon);
+      });
+  }
+
   onSearch() {
-    console.log(this.SEARCH_URL + this.nameSearch.value);
+    console.log(this.formSearch.controls['nameSearch'].value);
+
     this.http
-      .get(this.SEARCH_URL + this.nameSearch.value)
-      .subscribe();
+      .get<Pokemon[]>(
+        this.SEARCH_URL +
+          this.formSearch.controls['nameSearch'].value.toLowerCase() +
+          '/'
+      )
+      .subscribe((results: any) => {
+        this.pokemons = [];
+        this.totalPokemons = results.count;
+        const pokemon: Pokemon = {
+          image: results.sprites.front_default,
+          number: results.id,
+          name: results.name,
+          types: results.types.map((t: { type: { name: any } }) => t.type.name),
+        };
+        this.pokemons.push(pokemon);
+      });
+    this.formSearch.reset();
+  }
+
+  pageChanged($event: number) {
+    this.page = $event;
+    return this.http
+      .get<any>(this.SEARCH_URL + $event)
+      .pipe(
+        map((value) => value.results),
+        map((value: any) => {
+          return from(value).pipe(mergeMap((v: any) => this.http.get(v.url)));
+        }),
+        mergeMap((value) => value)
+      )
+      .subscribe((results: any) => {
+        this.totalPokemons = results.count;
+        const pokemon: Pokemon = {
+          image: results.sprites.front_default,
+          number: results.id,
+          name: results.name,
+          types: results.types.map((t: { type: { name: any } }) => t.type.name),
+        };
+        this.pokemons.push(pokemon);
+      });
   }
 }
 
