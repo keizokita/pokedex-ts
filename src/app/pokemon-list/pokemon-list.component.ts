@@ -10,7 +10,7 @@ import { from, map, mergeMap } from 'rxjs';
 })
 export class PokemonListComponent implements OnInit {
   public pokemons: Pokemon[] = [];
-  page = 1;
+  page = 0;
   itemsPerPage!: number;
   totalPokemons!: number;
   formSearch!: FormGroup;
@@ -33,27 +33,32 @@ export class PokemonListComponent implements OnInit {
 
   getPokemonList() {
     const URL = 'https://pokeapi.co/api/v2/pokemon/';
-    console.log(this.totalPokemons);
 
-    return this.http
-      .get<any>(URL)
-      .pipe(
-        map((value) => value.results),
-        map((value: any) => {
-          return from(value).pipe(mergeMap((v: any) => this.http.get(v.url)));
-        }),
-        mergeMap((value) => value)
-      )
-      .subscribe((results: any) => {
-        this.totalPokemons = results.count;
-        const pokemon: Pokemon = {
-          image: results.sprites.front_default,
-          number: results.id,
-          name: results.name,
-          types: results.types.map((t: { type: { name: any } }) => t.type.name),
+    return this.http.get<any>(URL).subscribe((response: any) => {
+      this.totalPokemons = response.count;
+      // console.table(response.results);
+      for (let pokemon of response.results) {
+        this.http.get<any>(pokemon.url).subscribe((res: any) => { //constinuar testando paths para popular cards
+          console.log('resposta da url pokemon',pokemon.url);
+          console.log('pokemon name', pokemon.url.name);
+          const myPokemonDetails: Pokemon = {
+            image: res.pokemon.sprites.front_default,
+            number: res.pokemon.id,
+            name: res.pokemon.name,
+            types: res.pokemon.types.map((t: { type: { name: any } }) => t.type.name),
+          }
+          this.pokemons.push(myPokemonDetails);
+        });
+        const myPokemon: Pokemon = {
+          image: '',
+          number: 0,
+          name: pokemon.name,
+          types: [],
         };
-        this.pokemons.push(pokemon);
-      });
+        this.pokemons.push(myPokemon);
+        // console.log('poke', pokemon);
+      }
+    });
   }
 
   onSearch() {
@@ -63,7 +68,7 @@ export class PokemonListComponent implements OnInit {
       .get<Pokemon[]>(
         this.SEARCH_URL +
           this.formSearch.controls['nameSearch'].value.toLowerCase() +
-          '/'
+          '/?offset='
       )
       .subscribe((results: any) => {
         this.pokemons = [];
@@ -82,7 +87,7 @@ export class PokemonListComponent implements OnInit {
   pageChanged($event: number) {
     this.page = $event;
     return this.http
-      .get<any>(this.SEARCH_URL + $event)
+      .get<any>(this.SEARCH_URL + '?offset=' + $event)
       .pipe(
         map((value) => value.results),
         map((value: any) => {
