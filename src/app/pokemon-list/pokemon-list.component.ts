@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { from, map, mergeMap } from 'rxjs';
 
 @Component({
   selector: 'app-pokemon-list',
@@ -19,51 +18,37 @@ export class PokemonListComponent implements OnInit {
 
   constructor(private http: HttpClient, private fb: FormBuilder) {}
   ngOnInit(): void {
-    this.getPokemonList();
+    this.getPokemonList(1); //getPokemonList tem como parametro 1 para iniciar a lista em 1
 
     this.formSearch = this.fb.group({
       nameSearch: [null],
     });
   }
 
-  Home() {
-    this.pokemons = [];
-    this.getPokemonList();
-  }
+  getPokemonList($event: any) {
+    this.pokemons = []; // zera a lista para nao acumular itens pesquisados anteriormente
+    this.page = $event;
 
-  getPokemonList() {
-    const URL = 'https://pokeapi.co/api/v2/pokemon/';
-
-    return this.http.get<any>(URL).subscribe((response: any) => {
+    return this.http.get<any>(this.SEARCH_URL  + '?offset=' + ($event - 1) * 20).subscribe((response: any) => { 
+      //calculo do offset para carregar 20 pokemons por pagina
       this.totalPokemons = response.count;
-      // console.table(response.results);
+      console.table(response.results);
+      console.log(response.results);
       for (let pokemon of response.results) {
-        this.http.get<any>(pokemon.url).subscribe((res: any) => { //constinuar testando paths para popular cards
-          console.log('resposta da url pokemon',pokemon.url);
-          console.log('pokemon name', pokemon.url.name);
+        this.http.get<any>(pokemon.url).subscribe((res: any) => { //segunda request para navegar na url de cada pokemon
           const myPokemonDetails: Pokemon = {
-            image: res.pokemon.sprites.front_default,
-            number: res.pokemon.id,
-            name: res.pokemon.name,
-            types: res.pokemon.types.map((t: { type: { name: any } }) => t.type.name),
+            image: res.sprites.front_default,
+            number: res.id,
+            name: res.name,
+            types: res.types.map((t: { type: { name: any } }) => t.type.name),
           }
           this.pokemons.push(myPokemonDetails);
         });
-        const myPokemon: Pokemon = {
-          image: '',
-          number: 0,
-          name: pokemon.name,
-          types: [],
-        };
-        this.pokemons.push(myPokemon);
-        // console.log('poke', pokemon);
       }
     });
   }
 
   onSearch() {
-    console.log(this.formSearch.controls['nameSearch'].value);
-
     this.http
       .get<Pokemon[]>(
         this.SEARCH_URL +
@@ -82,29 +67,6 @@ export class PokemonListComponent implements OnInit {
         this.pokemons.push(pokemon);
       });
     this.formSearch.reset();
-  }
-
-  pageChanged($event: number) {
-    this.page = $event;
-    return this.http
-      .get<any>(this.SEARCH_URL + '?offset=' + $event)
-      .pipe(
-        map((value) => value.results),
-        map((value: any) => {
-          return from(value).pipe(mergeMap((v: any) => this.http.get(v.url)));
-        }),
-        mergeMap((value) => value)
-      )
-      .subscribe((results: any) => {
-        this.totalPokemons = results.count;
-        const pokemon: Pokemon = {
-          image: results.sprites.front_default,
-          number: results.id,
-          name: results.name,
-          types: results.types.map((t: { type: { name: any } }) => t.type.name),
-        };
-        this.pokemons.push(pokemon);
-      });
   }
 }
 

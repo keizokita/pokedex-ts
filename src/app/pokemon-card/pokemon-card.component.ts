@@ -12,7 +12,7 @@ export class PokemonCardComponent {
   public pokemon!: Pokemon;
 card__type: any;
 
-  public leadingZero(str: string | number, size: number = 3): string {
+  public leadingZero(str: string | number, size: number = 3): string { //funcao para acrescentar 00 no id de cada pokemon
     let s = String(str);
     while (s.length < (size || 2)) {
       s = '0' + s;

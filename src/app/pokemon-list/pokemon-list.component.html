@@ -1,5 +1,5 @@
 <div class="container col-md-12">
-    <h5 class="tittle text-center" (click)="Home()">Pokedex</h5>
+    <h5 class="tittle text-center" (click)="getPokemonList($event)">Pokedex</h5>
 
     <div class="input-group rounded">
         <form [formGroup]="formSearch" class="d-flex col-md-12">
@@ -19,6 +19,6 @@
     </div>
     
     <div class="pagination">
-        <pagination-controls (pageChange)="pageChanged($event); pokemons = []"></pagination-controls>
+        <pagination-controls (pageChange)=" getPokemonList($event);"></pagination-controls>
     </div>
 </div>
