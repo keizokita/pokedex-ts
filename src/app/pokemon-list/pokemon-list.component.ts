@@ -13,7 +13,7 @@ export class PokemonListComponent implements OnInit {
   itemsPerPage!: number;
   totalPokemons!: number;
   formSearch!: FormGroup;
-  readonly SEARCH_URL = 'https://pokeapi.co/api/v2/pokemon/';
+  readonly SEARCH_URL = 'https://pokeapi.co/api/v2/';
   pokemon: any = [];
 
   constructor(private http: HttpClient, private fb: FormBuilder) {}
@@ -29,11 +29,11 @@ export class PokemonListComponent implements OnInit {
     this.pokemons = []; // zera a lista para nao acumular itens pesquisados anteriormente
     this.page = $event;
 
-    return this.http.get<any>(this.SEARCH_URL  + '?offset=' + ($event - 1) * 20).subscribe((response: any) => { 
+    return this.http.get<any>(this.SEARCH_URL + 'pokemon/' + '?offset=' + ($event - 1) * 20).subscribe((response: any) => { 
       //calculo do offset para carregar 20 pokemons por pagina
       this.totalPokemons = response.count;
-      console.table(response.results);
-      console.log(response.results);
+      // console.table(response.results);
+      // console.log(response.results);
       for (let pokemon of response.results) {
         this.http.get<any>(pokemon.url).subscribe((res: any) => { //segunda request para navegar na url de cada pokemon
           const myPokemonDetails: Pokemon = {

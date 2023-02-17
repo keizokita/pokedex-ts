@@ -1,19 +1,79 @@
-<div class="pokemon-card" *ngIf="pokemon">
-    <div class="pokemon-card__image poke-ajusts">
-        <img [src]="pokemon.image" alt="Pokemon Image">
-    </div>
+<div class="pokemon-card" *ngIf="pokemon" (click)="openStatusModal(template)">
+  <div class="pokemon-card__image poke-ajusts">
+    <img [src]="pokemon.image" alt="Pokemon Image" />
+  </div>
 
-    <div class="pokemon-card__number">
-        Nº {{ leadingZero(pokemon.number) }}
-    </div>
+  <div class="pokemon-card__number">Nº {{ leadingZero(pokemon.number) }}</div>
 
-    <div class="pokemon-card__name poke-ajusts">
-        {{ pokemon.name }}
-    </div>
+  <div class="pokemon-card__name poke-ajusts">
+    {{ pokemon.name }}
+  </div>
 
-    <div class="pokemon-card__types">
-        <div class="pokemon-card__type poke-ajusts" *ngFor="let type of pokemon.types" [class]="'pokemon-card__type--' + type.toLocaleLowerCase()">
-            {{ type }}
-        </div>
+  <div class="pokemon-card__types">
+    <div
+      class="pokemon-card__type poke-ajusts"
+      *ngFor="let type of pokemon.types"
+      [class]="'pokemon-card__type--' + type.toLocaleLowerCase()"
+    >
+      {{ type }}
     </div>
+  </div>
 </div>
+
+<!-- template para exibir as evoluções dos pokemons -->
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left poke-ajusts">Evolutions</h4>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="modalRef.hide()"
+    >
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body row">
+    <div class="pokemonModalEvolutions">
+      <!-- pokemon selecionado para exibicao de evolucoes -->
+      <div class="pokemonSelected">
+        <div class="pokemonCardModalAjusts">
+          <div class="col-md-3">
+            <div class="pokemon-card__image">
+              <img [src]="pokemon.image" alt="Pokemon Image" />
+            </div>
+            <div class="pokemonModalName">
+              {{ pokemon.name }}
+            </div>
+            <div class="pokemon-card__number">
+              Nº {{ leadingZero(pokemon.number) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pokemonSelectedEvolutions">
+        <!-- <div class="pokemon-card__image poke-ajusts col-md-3"></div> -->
+        <div class="pokemonSelected">
+            <div class="pokemonCardModalAjusts">
+              <div class="col-md-3">
+                <div class="pokemon-card__image">
+                  <img [src]="pokemon.image" alt="Pokemon Image" />
+                </div>
+                <div class="pokemonModalName">
+                  {{ pokemon.name }}
+                </div>
+                <div class="pokemon-card__number">
+                  Nº {{ leadingZero(pokemon.number) }}
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="modalRef.hide()">
+      Close
+    </button>
+  </div>
+</ng-template>
