@@ -71,6 +71,7 @@ export class PokemonListComponent implements OnInit {
 }
 
 export interface Pokemon {
+  [x: string]: any;
   image: string;
   number: number;
   name: string;

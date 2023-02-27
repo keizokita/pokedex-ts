@@ -145,10 +145,11 @@
 
 .pokemonModalEvolutions {
     text-transform: capitalize;
+    display: flex;
+    justify-content: space-around;
 }
 
 .pokemonCardModalAjusts {
     display: flex;
     justify-content: center;
-    flex-direction: column;
 }
