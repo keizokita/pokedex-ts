@@ -5,6 +5,7 @@ import {
 } from '../pokemon-list/pokemon-list.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-pokemon-card',
@@ -18,9 +19,11 @@ export class PokemonCardComponent {
   card__type: any;
   modalRef!: BsModalRef;
   totalPokemonsEvolutions: any;
-  pokemonEvolution: any;
+  evolutions: any[] = [];
   pokemonEvolutionURL: any;
-  pokemonEvolution2: any;
+  pokemonEvolution: any;
+  evolutionimg: any;
+
   constructor(
     private modalService: BsModalService,
     public pokemonList: PokemonListComponent,
@@ -45,77 +48,77 @@ export class PokemonCardComponent {
       .subscribe((answer: any) => {
         console.log('answer of sub', answer);
 
-        // this.pokemonEvolution = res.chain.evolves_to.species;
         this.pokemonEvolutionURL = answer.evolution_chain;
 
         console.log('pokemonEvolutionURL', this.pokemonEvolutionURL);
 
-        // quando pega a evolucao do pokemon, sempre vira o primeiro da lisa evolution_chain
         this.http
           .get<Pokemon[]>(this.pokemonEvolutionURL.url)
           .subscribe((response: any) => {
             console.log('response', response);
-            for (let pokemonEvolutionModal of response.chain.evolves_to) {
-              console.log(
-                'response.chain.evolves_to',
-                response.chain.evolves_to
-              );
-              this.http
-                .get<Pokemon[]>(
-                  this.pokemonList.SEARCH_URL +
-                    'pokemon/' +
-                    pokemonEvolutionModal.species.name
-                )
-                .subscribe((res: any) => {
-                  console.log(pokemonEvolutionModal.species.name);
-                  console.log('res(dados do pokemon)', res);
-                  // console.log('response of totalPokemonsEvolutions', res);
-                  const myPokemonDetailsModal: Pokemon = {
-                    image: res.sprites.front_default,
-                    number: res.id,
-                    name: res.name,
-                    types: res.types.map(
-                      (t: { type: { name: any } }) => t.type.name
-                    ),
-                  };
-                  // if (pokemonEvolutionModal.species.name == res.name) {
-                  //   // condicional para evolucao igual a primeira evolucao da lista for igual, exibir a proxima evolucao
-                  //   this.http
-                  //     .get<Pokemon[]>(this.pokemonEvolutionURL.url)
-                  //     .subscribe((resIf: any) => {
-                  //       console.log(
-                  //         resIf.chain.evolves_to[0].evolves_to[0].species.name
-                  //       );
-                  //       // resIf.evolves_to[0].evolves_to
-                  //       this.http
-                  //         .get<Pokemon[]>(
-                  //           this.pokemonList.SEARCH_URL +
-                  //             'pokemon/' +
-                  //             resIf.chain.evolves_to[0].evolves_to[0].species.name
-                  //         )
-                  //         .subscribe((res: any) => {
-                  //           console.log(pokemonEvolutionModal.species.name);
-                  //           console.log('res(dados do pokemon)', res);
-                  //           // console.log('response of totalPokemonsEvolutions', res);
-                  //           const myPokemonDetailsModal: Pokemon = {
-                  //             image: res.sprites.front_default,
-                  //             number: res.id,
-                  //             name: res.name,
-                  //             types: res.types.map(
-                  //               (t: { type: { name: any } }) => t.type.name
-                  //             ),
-                  //           };
-                  //           this.pokemons.push(myPokemonDetailsModal);
-                  //         });
-                  //     });
-                  // }
-                  console.log('pokemonEvolutionModal', pokemonEvolutionModal);
-                  this.pokemons.push(myPokemonDetailsModal);
-                  console.log('myPokemonDetailsModal', myPokemonDetailsModal);
-                });
-            }
+
+            this.evolutions = [];
+            this.getPokemonEvolutions(response.chain, this.evolutions);
+            console.log(this.evolutions);
           });
       });
+  }
+
+  // getPokemonEvolutionsImg(chain: any): any[] {
+  //   const evolutions: any[] = [];
+  //   do {
+  //   this.http
+  //       .get<Pokemon[]>(
+  //         this.pokemonList.SEARCH_URL + 'pokemon/' + chain.species.name
+  //       )
+  //       .subscribe((pokemonImg: any) => {
+  //         console.log(pokemonImg);
+  //         const evolutionimg = {
+  //           image: pokemonImg.sprites.front_default,
+  //         };
+  //         evolutions.push(evolutionimg);
+  //       });
+  //     } while (!!chain && chain.hasOwnProperty('evolves_to'));
+  //     return evolutions;
+  // }
+
+  getPokemonEvolutions(chain: any, evolutions: any[]): any {
+    // Percorre a arvore de evolucao do pokemon para armazenar as informacoes numa array
+    // const evolutions: any[] = [];
+    
+    if (!!chain && chain.hasOwnProperty('evolves_to')) {
+      return this.http
+        .get<Pokemon[]>(
+          this.pokemonList.SEARCH_URL + 'pokemon/' + chain.species.name
+        )
+        .subscribe((pokemonEvo: any) => {
+          console.log(pokemonEvo);
+          const evolution = {
+            image: pokemonEvo.sprites.front_default,
+            name: pokemonEvo.name,
+            number: pokemonEvo.id,
+          };
+          // console.log('test', typeof this.getPokemonEvolutions(chain.evolves_to)[Symbol.iterator]);
+          evolutions.push(evolution);
+          // evolutions = [...evolutions];
+          // console.log(evolutions)
+          this.getPokemonEvolutions(chain.evolves_to[0], evolutions);
+        });
+    }
+    // do {
+    //   const evolution = {
+    //     name: chain.species.name,
+    //     number: chain.species.url.split('/')[6],
+    //   };
+    //   evolutions.push(evolution);
+    //   chain = chain.evolves_to[0];
+    // } while (!!chain && chain.hasOwnProperty('evolves_to'));
+    // // Verifica se chain existe e contem evolves_to, equanto true, o loop sera executado
+    // return evolutions;
+  }
+
+  getAsyncEvolutions(): Observable<any[]> {
+    return of(this.evolutions)
   }
 
   openStatusModal(template: TemplateRef<any>) {
