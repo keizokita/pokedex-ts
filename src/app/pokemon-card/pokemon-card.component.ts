@@ -46,35 +46,27 @@ export class PokemonCardComponent {
         this.pokemonList.SEARCH_URL + 'pokemon-species/' + this.pokemon.number
       )
       .subscribe((answer: any) => {
-        console.log('answer of sub', answer);
-
         this.pokemonEvolutionURL = answer.evolution_chain;
-
-        console.log('pokemonEvolutionURL', this.pokemonEvolutionURL);
 
         this.http
           .get<Pokemon[]>(this.pokemonEvolutionURL.url)
           .subscribe((response: any) => {
-            console.log('response', response);
-
             this.evolutions = [];
             this.getPokemonEvolutions(response.chain, this.evolutions);
-            console.log(this.evolutions);
           });
       });
   }
 
-
   getPokemonEvolutions(chain: any, evolutions: any[]): any {
     // Percorre a arvore de evolucao do pokemon para armazenar as informacoes numa array
-    
+
     if (!!chain && chain.hasOwnProperty('evolves_to')) {
       return this.http
         .get<Pokemon[]>(
           this.pokemonList.SEARCH_URL + 'pokemon/' + chain.species.name
         )
         .subscribe((pokemonEvo: any) => {
-          console.log(pokemonEvo);
+          // console.log(pokemonEvo);
           const evolution = {
             image: pokemonEvo.sprites.front_default,
             name: pokemonEvo.name,
@@ -88,7 +80,7 @@ export class PokemonCardComponent {
 
   getAsyncEvolutions(): Observable<any[]> {
     // funcao para transformar os dados em retornados da API em dados assincronos
-    return of(this.evolutions)
+    return of(this.evolutions);
   }
 
   openStatusModal(template: TemplateRef<any>) {
