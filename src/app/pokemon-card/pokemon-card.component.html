@@ -36,27 +36,12 @@
 
   <div class="modal-body">
     <div class="pokemonModalEvolutions">
-      <!-- pokemon selecionado para exibicao de evolucoes -->
-      <!-- <div class="pokemonCardModalAjusts pokemonSelected">
-        <div
-          class=""
-          style="display: flex; flex-direction: column; align-items: center"
-        >
-          <div class="pokemon-card__image">
-            <img [src]="pokemon.image" alt="Pokemon Image" />
-          </div>
-          <div class="pokemonModalName">
-            {{ pokemon.name }}
-          </div>
-          <div class="pokemon-card__number">
-            Nº {{ leadingZero(pokemon.number) }}
-          </div>
-        </div>
-      </div> -->
-      <div class="pokemonSelectedEvolutions" *ngFor="let evolution of getAsyncEvolutions() | async">
+      <div
+        class="pokemonSelectedEvolutions"
+        *ngFor="let evolution of getAsyncEvolutions() | async"
+      >
         <div class="pokemonCardModalAjusts pokemonSelected">
           <div
-            class=""
             style="display: flex; flex-direction: column; align-items: center"
           >
             <div class="pokemon-card__image">

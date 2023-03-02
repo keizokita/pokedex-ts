@@ -64,27 +64,9 @@ export class PokemonCardComponent {
       });
   }
 
-  // getPokemonEvolutionsImg(chain: any): any[] {
-  //   const evolutions: any[] = [];
-  //   do {
-  //   this.http
-  //       .get<Pokemon[]>(
-  //         this.pokemonList.SEARCH_URL + 'pokemon/' + chain.species.name
-  //       )
-  //       .subscribe((pokemonImg: any) => {
-  //         console.log(pokemonImg);
-  //         const evolutionimg = {
-  //           image: pokemonImg.sprites.front_default,
-  //         };
-  //         evolutions.push(evolutionimg);
-  //       });
-  //     } while (!!chain && chain.hasOwnProperty('evolves_to'));
-  //     return evolutions;
-  // }
 
   getPokemonEvolutions(chain: any, evolutions: any[]): any {
     // Percorre a arvore de evolucao do pokemon para armazenar as informacoes numa array
-    // const evolutions: any[] = [];
     
     if (!!chain && chain.hasOwnProperty('evolves_to')) {
       return this.http
@@ -98,26 +80,14 @@ export class PokemonCardComponent {
             name: pokemonEvo.name,
             number: pokemonEvo.id,
           };
-          // console.log('test', typeof this.getPokemonEvolutions(chain.evolves_to)[Symbol.iterator]);
           evolutions.push(evolution);
-          // evolutions = [...evolutions];
-          // console.log(evolutions)
           this.getPokemonEvolutions(chain.evolves_to[0], evolutions);
         });
     }
-    // do {
-    //   const evolution = {
-    //     name: chain.species.name,
-    //     number: chain.species.url.split('/')[6],
-    //   };
-    //   evolutions.push(evolution);
-    //   chain = chain.evolves_to[0];
-    // } while (!!chain && chain.hasOwnProperty('evolves_to'));
-    // // Verifica se chain existe e contem evolves_to, equanto true, o loop sera executado
-    // return evolutions;
   }
 
   getAsyncEvolutions(): Observable<any[]> {
+    // funcao para transformar os dados em retornados da API em dados assincronos
     return of(this.evolutions)
   }
 
